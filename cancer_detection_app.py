@@ -1,40 +1,10 @@
 import streamlit as st
-import numpy as np
 from PIL import Image
+import numpy as np
+from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 
-# --- Charger le modèle .h5 ---
-import os
-import gdown
-
-model_path = "model/cancer_detector.h5"
-url = "https://drive.google.com/uc?id=TON_ID_ICI"  # Remplace par le bon ID
-
-# Télécharger le fichier si pas encore là
-if not os.path.exists(model_path):
-    os.makedirs("model", exist_ok=True)
-    gdown.download(url, model_path, quiet=False)
-
-model = load_model(model_path)
-
-IMG_SIZE = (224, 224)  # Taille attendue par ton modèle
-CLASS_NAMES = ["benign", "malignant", "normal"]  # Les classes possibles
-
-# --- Fonction de prédiction ---
-def predict_image(image):
-    image = image.resize(IMG_SIZE)
-    image_array = np.array(image) / 255.0
-
-    # Si l'image est en niveaux de gris, la convertir en RGB
-    if image_array.ndim == 2:
-        image_array = np.stack((image_array,) * 3, axis=-1)
-
-    image_array = np.expand_dims(image_array, axis=0)  # Ajouter la dimension batch
-    prediction = model.predict(image_array)
-    predicted_label = CLASS_NAMES[np.argmax(prediction)]
-    return predicted_label
-
-# --- Configuration de la page ---
+# Configuration de la page
 st.set_page_config(page_title="Détection Cancer du Sein", page_icon="🎗️", layout="centered")
 
 # --- Bandeau avec logos ---
@@ -42,7 +12,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
     um5_logo = Image.open("images/logo_um5.png")
-    st.image(um5_logo, width=200)
+    st.image(um5_logo, width=100)
 
 with col2:
     st.markdown(
@@ -55,36 +25,56 @@ with col2:
     )
 
 with col3:
-    pink_logo = Image.open("images/breast.png")
-    st.image(pink_logo, width=200)
+    pink_logo = Image.open("A_flat_digital_graphic_design_logo_features_breast.png")
+    st.image(pink_logo, width=100)
 
 # --- Résumé du projet ---
 st.markdown("---")
-project_description = """
-<div style='background-color:#ffe6f0; padding: 15px; border-radius: 10px'>
-<strong>Ce projet</strong> a pour objectif de détecter automatiquement les anomalies sur des images échographiques 
-du sein à l’aide d’un modèle d’intelligence artificielle. Il classe les images en 3 catégories :
-<ul>
-    <li><b>Bénin</b> (non dangereux)</li>
-    <li><b>Malin</b> (cancer potentiel)</li>
-    <li><b>Normal</b> (aucune anomalie)</li>
-</ul>
-</div>
-"""
-st.markdown(project_description, unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style='background-color:#ffe6f0; padding: 15px; border-radius: 10px'>
+    <strong>Ce projet</strong> a pour objectif de détecter automatiquement les anomalies sur des images échographiques 
+    du sein à l’aide d’un modèle d’intelligence artificielle. Il classe les images en 3 catégories :
+    <ul>
+        <li><b>Bénin</b> (non dangereux)</li>
+        <li><b>Malin</b> (cancer potentiel)</li>
+        <li><b>Normal</b> (aucune anomalie)</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True
+)
 
 # --- Upload de l'image ---
-uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png, .jpg ou .jpeg)", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png ou .jpg)", type=["png", "jpg", "jpeg"])
 
+# Chargement du modèle
+@st.cache_resource
+def load_trained_model():
+    model = load_model("model/model.h5")  # Assurez-vous que le modèle est dans le bon chemin
+    return model
+
+model = load_trained_model()
+
+# Si une image est téléchargée, afficher et prédire
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Image importée', use_container_width=True)
+    st.image(uploaded_file, caption='Image importée', use_column_width=True)
     
-    st.success("✅ Image reçue. Prédiction en cours...")
+    # Prétraitement de l'image pour la prédiction
+    img = Image.open(uploaded_file).convert("RGB")
+    img = img.resize((224, 224))  # Assurez-vous que la taille correspond à celle du modèle
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0) / 255.0  # Normalisation de l'image
 
-    # Prédiction de l'image
-    prediction = predict_image(image)
-    st.success(f"🎯 Résultat de la prédiction : **{prediction.upper()}**")
+    try:
+        # Prédiction du modèle
+        prediction = model.predict(img_array)
+        predicted_class = np.argmax(prediction)
+        classes = ["Bénin", "Malin", "Normal"]
+        result = classes[predicted_class]
+        st.markdown(f"### 🩺 Résultat : **{result}**")
+        st.success("✅ Prédiction réussie.")
+    except Exception as e:
+        st.error(f"❌ Erreur de prédiction : {str(e)}")
 
 # --- Lien vers GitHub ---
 st.markdown("---")
