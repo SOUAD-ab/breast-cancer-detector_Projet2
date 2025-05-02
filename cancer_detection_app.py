@@ -1,7 +1,28 @@
 import streamlit as st
+import numpy as np
 from PIL import Image
+from tensorflow.keras.models import load_model
 
-# Configuration de la page
+# --- Charger le modèle ---
+model = load_model("model/cancer_detector")  # Adapté à ton arborescence
+IMG_SIZE = (224, 224)
+CLASS_NAMES = ["benign", "malignant", "normal"]
+
+# --- Fonction de prédiction ---
+def predict_image(image):
+    image = image.resize(IMG_SIZE)
+    image_array = np.array(image) / 255.0
+
+    # Si image en niveaux de gris, la convertir en RGB
+    if image_array.ndim == 2:
+        image_array = np.stack((image_array,) * 3, axis=-1)
+
+    image_array = np.expand_dims(image_array, axis=0)  # Ajouter batch dimension
+    prediction = model.predict(image_array)
+    predicted_label = CLASS_NAMES[np.argmax(prediction)]
+    return predicted_label
+
+# --- Configuration de la page ---
 st.set_page_config(page_title="Détection Cancer du Sein", page_icon="🎗️", layout="centered")
 
 # --- Bandeau avec logos ---
@@ -45,14 +66,13 @@ st.markdown(
 uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png ou .jpg)", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption='Image importée', use_container_width=True)
-    # Ici tu peux ajouter ton modèle et la prédiction
+    image = Image.open(uploaded_file)
+    st.image(image, caption='Image importée', use_container_width=True)
+    
     st.success("✅ Image reçue. Prédiction en cours...")
-    # load_model & prédiction à ajouter ici
-
-   # Faire la prédiction ici
-    prediction = predict_image(image)  # ← ta fonction de prédiction
-    st.success(f"Résultat : {prediction}")
+    
+    prediction = predict_image(image)
+    st.success(f"🎯 Résultat de la prédiction : **{prediction.upper()}**")
 
 # --- Lien vers GitHub ---
 st.markdown("---")
