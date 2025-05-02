@@ -9,7 +9,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
     um5_logo = Image.open("images/logo_um5.png")
-    st.image(um5_logo, width=100)
+    st.image(um5_logo, width=200)
 
 with col2:
     st.markdown(
@@ -22,8 +22,8 @@ with col2:
     )
 
 with col3:
-    pink_logo = Image.open("A_flat_digital_graphic_design_logo_features_breast.png")
-    st.image(pink_logo, width=100)
+    pink_logo = Image.open("images/breast.png")
+    st.image(pink_logo, width=200)
 
 # --- Résumé du projet ---
 st.markdown("---")
