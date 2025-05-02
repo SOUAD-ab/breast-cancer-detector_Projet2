@@ -45,7 +45,7 @@ st.markdown(
 uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png ou .jpg)", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption='Image importée', use_column_width=True)
+    st.image(uploaded_file, caption='Image importée', use_container_width=True)
     # Ici tu peux ajouter ton modèle et la prédiction
     st.success("✅ Image reçue. Prédiction en cours...")
     # load_model & prédiction à ajouter ici
