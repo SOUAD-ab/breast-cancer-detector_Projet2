@@ -4,7 +4,19 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 
 # --- Charger le modèle .h5 ---
-model = load_model("notebook_dl.ipynb/model/cancer_detector.h5")  # Assure-toi que ce chemin est correct
+import os
+import gdown
+
+model_path = "model/cancer_detector.h5"
+url = "https://drive.google.com/uc?id=TON_ID_ICI"  # Remplace par le bon ID
+
+# Télécharger le fichier si pas encore là
+if not os.path.exists(model_path):
+    os.makedirs("model", exist_ok=True)
+    gdown.download(url, model_path, quiet=False)
+
+model = load_model(model_path)
+
 IMG_SIZE = (224, 224)  # Taille attendue par ton modèle
 CLASS_NAMES = ["benign", "malignant", "normal"]  # Les classes possibles
 
