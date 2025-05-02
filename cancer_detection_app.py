@@ -25,7 +25,7 @@ with col2:
     )
 
 with col3:
-    pink_logo = Image.open("A_flat_digital_graphic_design_logo_features_breast.png")
+    pink_logo = Image.open("breast.png")
     st.image(pink_logo, width=100)
 
 # --- Résumé du projet ---
