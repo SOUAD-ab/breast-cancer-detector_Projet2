@@ -50,6 +50,10 @@ if uploaded_file is not None:
     st.success("✅ Image reçue. Prédiction en cours...")
     # load_model & prédiction à ajouter ici
 
+   # Faire la prédiction ici
+    prediction = predict_image(image)  # ← ta fonction de prédiction
+    st.success(f"Résultat : {prediction}")
+
 # --- Lien vers GitHub ---
 st.markdown("---")
 st.markdown(
