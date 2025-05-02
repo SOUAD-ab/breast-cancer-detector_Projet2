@@ -3,21 +3,21 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
 
-# --- Charger le modèle ---
-model = load_model("model/cancer_detector")  # Assure-toi que ce chemin est correct
-IMG_SIZE = (224, 224)
-CLASS_NAMES = ["benign", "malignant", "normal"]
+# --- Charger le modèle .h5 ---
+model = load_model("model/cancer_detector.h5")  # Assure-toi que ce chemin est correct
+IMG_SIZE = (224, 224)  # Taille attendue par ton modèle
+CLASS_NAMES = ["benign", "malignant", "normal"]  # Les classes possibles
 
 # --- Fonction de prédiction ---
 def predict_image(image):
     image = image.resize(IMG_SIZE)
     image_array = np.array(image) / 255.0
 
-    # Si image en niveaux de gris, la convertir en RGB
+    # Si l'image est en niveaux de gris, la convertir en RGB
     if image_array.ndim == 2:
         image_array = np.stack((image_array,) * 3, axis=-1)
 
-    image_array = np.expand_dims(image_array, axis=0)  # Ajouter dimension batch
+    image_array = np.expand_dims(image_array, axis=0)  # Ajouter la dimension batch
     prediction = model.predict(image_array)
     predicted_label = CLASS_NAMES[np.argmax(prediction)]
     return predicted_label
@@ -47,7 +47,6 @@ with col3:
     st.image(pink_logo, width=200)
 
 # --- Résumé du projet ---
-# --- Résumé du projet ---
 st.markdown("---")
 project_description = """
 <div style='background-color:#ffe6f0; padding: 15px; border-radius: 10px'>
@@ -63,14 +62,15 @@ du sein à l’aide d’un modèle d’intelligence artificielle. Il classe les 
 st.markdown(project_description, unsafe_allow_html=True)
 
 # --- Upload de l'image ---
-uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png ou .jpg)", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("📤 Veuillez importer une image échographique (format .png, .jpg ou .jpeg)", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Image importée', use_container_width=True)
     
     st.success("✅ Image reçue. Prédiction en cours...")
-    
+
+    # Prédiction de l'image
     prediction = predict_image(image)
     st.success(f"🎯 Résultat de la prédiction : **{prediction.upper()}**")
 
