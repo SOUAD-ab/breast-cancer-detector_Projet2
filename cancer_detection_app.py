@@ -4,7 +4,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 
 # --- Charger le modèle .h5 ---
-model = load_model("model/cancer_detector.h5")  # Assure-toi que ce chemin est correct
+model = load_model("notebook_dl.ipynb/model/cancer_detector.h")  # Assure-toi que ce chemin est correct
 IMG_SIZE = (224, 224)  # Taille attendue par ton modèle
 CLASS_NAMES = ["benign", "malignant", "normal"]  # Les classes possibles
 
