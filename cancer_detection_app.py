@@ -4,7 +4,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 
 # --- Charger le modèle ---
-model = load_model("model/cancer_detector")  # Adapté à ton arborescence
+model = load_model("model/cancer_detector")  # Assure-toi que ce chemin est correct
 IMG_SIZE = (224, 224)
 CLASS_NAMES = ["benign", "malignant", "normal"]
 
@@ -17,7 +17,7 @@ def predict_image(image):
     if image_array.ndim == 2:
         image_array = np.stack((image_array,) * 3, axis=-1)
 
-    image_array = np.expand_dims(image_array, axis=0)  # Ajouter batch dimension
+    image_array = np.expand_dims(image_array, axis=0)  # Ajouter dimension batch
     prediction = model.predict(image_array)
     predicted_label = CLASS_NAMES[np.argmax(prediction)]
     return predicted_label
