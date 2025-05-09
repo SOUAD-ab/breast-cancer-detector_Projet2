@@ -22,8 +22,8 @@ https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset
 🗂️ 2. Structure du projet :
 
 breast-cancer-detector/ │ ├── 📓 notebook/ │ └──
-Breast_Cancer_Classification.ipynb │ ├── 🧠 model/ │ └──
-mobilenetv2_model.h5 │ ├── requirements.txt ├── README.md └── 🎥
+breast_cancer_detection_mobilenetv2.ipynb │ ├── 🧠 model/ │ └──
+breast_cancer_model.h5 │ ├── requirements.txt ├── README.md └── 🎥
 video_presentation.mp4
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
